@@ -14,10 +14,16 @@
             
         </div>
 
-
-        {% for message in messages %}
-        {{message}}
-        {% endfor %}
+        <div class="ms-5 me-5">
+            {% for message in messages %}
+            {{message}}
+            {% endfor %}
+        </div>
+        <div class="col-xl-7">
+            <div class="ms-5 me-5">
+                <li  class="btn btn-outline-primary"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'people' %}"><font><i><b> FIND FRINDS</b></i></font></a></li>
+            </div>
+            </div>
     </div>
 
     <div class="col-5">
@@ -34,11 +40,7 @@
         <div class="ms-5 me-5">
             {% include 'follow/following.html' %}
         </div>
-        <div class="col-xl-7">
-        <div class="ms-5 me-5">
-            <li  class="btn btn-outline-primary"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'people' %}"><font size="1"><i><b> FIND FRINDS</b></i></font></a></li>
-        </div>
-        </div>
+        
     </div>
 </div>
 

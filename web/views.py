@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 from django.shortcuts import redirect, render
 from api.models import *
@@ -8,6 +8,7 @@ from django.views.generic import CreateView, FormView, ListView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth import authenticate, login,logout
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
@@ -47,7 +48,7 @@ class LoginView(FormView):
                 login(request, user)
                 return redirect("home")
             else:
-                messages.error(request, "Your credentials not matching, try again")
+                messages.error(request)
                 return render(request, "login.html", {'form':form})
 
 class IndexView(CreateView, ListView):
@@ -80,7 +81,7 @@ def add_comment(request, *args, **kwargs):
     qs = Posts.objects.get(id=id)
     # Comments.objects.create(comment=cmt, post=qs, user=request.user)
     qs.comments_set.create(user=request.user, comment=cmt)
-    messages.success(request, "Comment added succesfully")
+    messages.success(request, " your has been Comment added succesfully")
     return redirect("home")
 
 def like_post(request, *args, **kwargs):
@@ -100,6 +101,58 @@ def dislike_post(request, *args, **kwargs):
     else:
         ps.dislike.add(request.user)
     return redirect("home")
+
+def delete_post(request, post_id):
+    if request.user.is_authenticated:
+        if request.method == 'GET':
+            post = Posts.objects.get(id=post_id)
+            if request.user == post.user:
+                try:
+                    delete_post= post.delete()
+                    return HttpResponse("post deleted sucessfully")
+                except Exception as e:
+                    return HttpResponse(e)
+            else:
+                return HttpResponse("post deleted sucessfully")
+        else:
+            return HttpResponse()
+    else:
+        return HttpResponseRedirect(('login'))
+
+# @csrf_exempt
+# def like_post(request, id):
+#     if request.user.is_authenticated:
+#         if request.method == 'GET':
+#             post = Posts.objects.get(pk=id)
+#             print(post)
+#             try:
+#                 post.like.add(request.user)
+#                 post.save()
+#                 return HttpResponse("U LIKED THE POST")
+#             except Exception as e:
+#                 return HttpResponse(e)
+#         else:
+#             return HttpResponse()
+#     else:
+#         return HttpResponseRedirect(('login'))
+
+# @csrf_exempt
+# def dislike_post(request, id):
+#     if request.user.is_authenticated:
+#         if request.method == 'GET':
+#             post = Posts.objects.get(pk=id)
+#             print(post)
+#             try:
+#                 post.like.remove(request.user)
+#                 post.save()
+#                 return HttpResponse("U DISLIKED THE POST")
+#             except Exception as e:
+#                 return HttpResponse(e)
+#         else:
+#             return HttpResponse()
+#     else:
+#         return HttpResponseRedirect(('login'))
+
 
 
 class ListPeopleView(ListView):
@@ -132,10 +185,11 @@ def profile(request):
     postcount=Posts.objects.filter(user_id=request.user).count
 
     mydetails=User.objects.filter(id=request.user.id)
-
+    # follower_count = Friends.objects.filter(id=request.user.id).follower.all().count()
+    # following_count = Friends.objects.filter(id=request.user.id).count()
 
     context={
-        'mydetails':mydetails,'mypost':mypost,'postcount':postcount
+        'mydetails':mydetails,'mypost':mypost,'postcount':postcount,
 
     }
     return render(request, 'profile/profile2.html', context)
@@ -144,3 +198,40 @@ def profile(request):
 def sign_out(request, *args, **kwargs):
     login(request, request.user)
     return redirect("sign-in")
+
+
+def search(request):
+    query = request.GET.get('user')
+    users = User.objects.filter(username=query)
+    return render(request, 'search_results.html', {'users': users})
+
+
+# def profile2(request, username):
+#     user = User.objects.get(username=username)
+#     all_posts = Posts.objects.filter(user_id=request.user)
+#     page_number = request.GET.get('page')
+#     if page_number == None:
+#         page_number = 1
+#     posts = Posts.objects.filter(user_id=request.user).count
+#     followings = []
+#     suggestions = []
+#     follower = False
+#     if request.user.is_authenticated:
+#         followings = Friends.objects.filter(follower=request.user).values_list('user', flat=True)
+#         suggestions = User.objects.exclude(pk__in=followings).exclude(username=request.user.username).order_by("?")[:6]
+
+#         if request.user in Friends.objects.get(user=user).follower.all():
+#             follower = True
+    
+#     follower_count = Friends.objects.get(user=user).follower.all().count()
+#     following_count = Friends.objects.filter(followers=user).count()
+#     return render(request, 'profileview.html', {
+#         "username": user,
+#         "posts": posts,
+#         "posts_count": all_posts.count(),
+#         "suggestions": suggestions,
+#         "page": "profile",
+#         "is_follower": follower,
+#         "follower_count": follower_count,
+#         "following_count": following_count
+#     })

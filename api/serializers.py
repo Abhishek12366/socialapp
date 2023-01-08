@@ -3,12 +3,14 @@ from django.contrib.auth.models import User
 from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
+    # profile_pic = serializers.ImageField(upload_to='images')
     class Meta:
         model = User
         fields = [
             "username",
             "email",
-            "password"
+            "password",
+            # "profile_pic"
         ]
     
     def create(self, validated_data):

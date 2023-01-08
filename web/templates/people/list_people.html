@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 
 
 {% block body_block %}
@@ -38,8 +38,8 @@
                   <h5 class="card-title">{{person.username}}</h5>
                   
                     <a href="{% url 'add-follower' person.id %}" class="btn btn-outline-primary"></button>follow </a>
-                  
-                  <p class="card-text"><small class="text-muted">{{person.last_login}}</small></p>
+                    
+                  <p class="card-text"><small class="text-muted">last seen::{{person.last_login}}</small></p>
                 </div>
               </div>
             </div>

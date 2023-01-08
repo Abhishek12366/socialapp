@@ -35,14 +35,36 @@
         <a class="strip" href="" title="" data-strip-group="mygroup" data-strip-group-options="loop: false">
         <img src="{{post.image.url}}" style="height: 250px; width: 300px;" alt=""></a>
         </li>
+        {% if request.user is authenticated %}
+                <a href="{% url 'deletepost' post.id %}" type="button" class="btn btn-outline-danger shadow-sm text-dark">{{post.posts}}  delete post </a>
+                {% else %}
+              
+                <a href="{% url 'deletepost' post.id %}" type="button" class="btn btn-outline-danger shadow-sm text-dark">{{post.posts}} delete post </a>
+              {%endif%}
         {% endfor %}
 
     </div>
 
-    <div class="col-4">
+    <!-- <div class="col-4">
         <div class="ms-5 me-5">
-            {% include 'follow/following.html' %}
-
+          
+            <div>
+                <strong>
+                    {{postcount}}
+                </strong>
+                &nbsp;<span class="grey">Posts</span>
+                &ensp;
+                <a href="#">
+                    <strong id="following__count">{{following_count | default:0}}</strong>&nbsp;<span class="grey">Following</span>
+                </a>
+                &ensp;
+                <a href="#">
+                    <strong id="follower__count">{{follower_count | default:0}}</strong>&nbsp;<span class="grey">Followers</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div> -->
         </div>
     </div>
 </div>
