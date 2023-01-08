@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+<div class="row mt-3">
+    <div class="col-3">
+        
+        <div class="card rounded-pill border-0 shadow ms-5 mt-2 p-4">
+            <div class="card-body">
+                {% include 'profile/profile.html' %}
+
+            <!-- <a href="" class="btn btn-outline-success form-control mt-4 rounded-pill" style="display: block;">people</a>
+            <a href="" class="btn btn-outline-success form-control mt-4 rounded-pill">profile</a> -->
+            </div>
+            
+        </div>
+
+
+        {% for message in messages %}
+        {{message}}
+        {% endfor %}
+    </div>
+
+    <div class="col-5">
+
+        <h5 class="ms-5"><font colour="black"><i>FEEDS</i></font></h5>
+
+        {% include 'post/post_create.html' %}
+
+        {% include 'post/post_list.html' %}
+
+    </div>
+
+    <div class="col-4">
+        <div class="ms-5 me-5">
+            {% include 'follow/following.html' %}
+        </div>
+        <div class="col-xl-7">
+        <div class="ms-5 me-5">
+            <li  class="btn btn-outline-primary"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'people' %}"><font size="1"><i><b> FIND FRINDS</b></i></font></a></li>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body_block %}

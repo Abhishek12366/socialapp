@@ -1,0 +1,58 @@
+
+
+{% for post in posts %}
+
+<div class="card-div mt-4 mb-2 ms-5">
+    <div class="card p-2 border border-0 shadow-sm" style="width: 100%">
+        <img src="{{post.imageURL}}"class="card-img-top" alt="...">
+        <div class="card-body">
+            <p class="card-text">{{post.title}}</p>
+
+            <div class="btn-group border border-0" style="width: 100%;;" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-outline-warning shadow-sm text-dark collapsed"
+                    data-bs-toggle="collapse" data-bs-target="#flush-collapse{{post.id}}" aria-expanded="false"
+                    aria-controls="flush-collapseOne"><i class="fa-solid fa-comment"></i></button>
+                
+            {% if not request.user in post.like.all %}
+                <a href="{% url 'like-post' post.id %}" type="button" class="btn btn-outline-warning shadow-sm text-dark">{{post.likes}} <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+                {% else %}
+              
+                <a href="{% url 'like-post' post.id %}" type="button" class="btn btn-outline-warning shadow-sm text-dark">{{post.likes}} <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+              {%endif%}
+
+                
+            </div>
+
+            <!-- comment section -->
+            <div class="accordion accordion-flush" id="accordionFlushExample">
+                <div class="accordion-item">
+                    <div id="flush-collapse{{post.id}}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                        data-bs-parent="#accordionFlushExample" style=>
+
+                        <form action="{% url 'add-comment' post.id %}" method="post">
+                            {% csrf_token %}
+                            <textarea name="comment" class="form-control" id="id_comment" cols="74" rows="5"></textarea>
+                            <input type="submit" value="addcomment" class="btn btn-outline-warning">
+                        </form>
+
+                        {% for comment in post.comments %}
+                        <div class="accordion-body bg-light m-1 mt-2">
+                            <div class="">
+                                <p><small>@{{comment.user}}</small></p>
+                                <p>{{comment.comment}}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <!-- end of comment section -->
+
+            
+
+            
+        </div>
+    </div>
+</div>
+
+{% endfor %}
