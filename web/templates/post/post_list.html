@@ -13,18 +13,19 @@
                     data-bs-toggle="collapse" data-bs-target="#flush-collapse{{post.id}}" aria-expanded="false"
                     aria-controls="flush-collapseOne"><i class="fa-solid fa-comment"></i></button>
                 
-            {% if not request.user in post.like.all %}
+            {% if not request.user in post.likes.all %}
                 <a href="{% url 'like-post' post.id %}" type="button" class="btn btn-outline-warning shadow-sm text-dark">{{post.likes}} <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
                 {% else %}
               
-                <a href="{% url 'like-post' post.id %}" type="button" class="btn btn-outline-warning shadow-sm text-dark">{{post.likes}} <i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+                <a href="{% url 'like-post' post.id %}" type="button" class="btn btn-outline-warning shadow-sm text-dark">{{post.likes}} <i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
               {%endif%}
            
               
                 
             </div>
+            
 
-            <!-- comment section -->
+            <!-- <-- comment section --> 
             <div class="accordion accordion-flush" id="accordionFlushExample">
                 <div class="accordion-item">
                     <div id="flush-collapse{{post.id}}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
@@ -39,8 +40,33 @@
                         {% for comment in post.comments %}
                         <div class="accordion-body bg-light m-1 mt-2">
                             <div class="">
+                                <img src="images\dp.png" class="border rounded-circle me-2"
+                                alt="" style="height: 40px" />
                                 <p><small>@{{comment.user}}</small></p>
                                 <p>{{comment.comment}}</p>
+                                
+
+
+                                    {% if comment.user == user %}
+                                    <a href="{% url 'delete_comment' comment.pk %}"> Delete </a>
+                                           
+                                    {% endif %}
+                            
+                                <p><a href="#">
+                                    <i class="fas fa-thumbs-up text-primary "></i>
+                                    <span>{{ comment.liked.count}}</span>
+                                  </a></p>
+                                <p>
+                                    <a href="#" class="text-muted small ms-3 me-2">
+          
+                                        {% if user in comment.liked.all %}
+                                      <a href="{% url 'unlike_comment' comment.pk %}">Unlike</a>
+                                  {% else %}
+                                      <a href="{% url 'like_comment' comment.pk %}">Like</a>
+                                  {% endif %}
+                                 </p>
+                          
+                            </a>
                             </div>
                         </div>
                         {% endfor %}

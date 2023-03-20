@@ -1,0 +1,387 @@
+
+{% block content %}
+{% load static %}
+<head>
+    <title>Profile</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/profilestyle.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <body>
+
+    <section class="h-100  gradient-custom-2">
+      <div class=" py-5 h-100  ">
+        <div class="row d-flex justify-content-center align-items-center h-100 ">
+          <div class="col col-lg-9 col-xl-7">
+            <div class="card ">
+              <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+                <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                  <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+                    style="width: 150px; z-index: 1">
+                  
+                  
+                </div>
+                <div class="ms-3" style="margin-top: 130px;">
+                  <h5>{{user.first_name}} {{user.last_name}}</h5>
+                  <p>India</p>
+                 
+                </div>
+                
+              </div>
+              <div class="p-4 text-black" style="background-color: #f8f9fa;">
+                     
+                
+                <button class="btn btn-primary mt-3 form-control" id="update-btn">Update Profile</button>
+
+
+                <div class="modal" tabindex="-1" role="dialog" id="update-alert">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Update Profile</h5>
+                        <button type="button" class="close form-control" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                    <div class="container">
+      
+                  <form method="post" action="{% url 'profile' %}">
+                    {% csrf_token %}
+                    {{ user_form.as_p }}
+                    {{ profile_form.as_p }}
+                  </div>
+      
+                <div class="modal-footer">
+      
+                  <input type="submit" value="Submit" class="btn btn-primary pb-2 form-control">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+                <div class="d-flex justify-content-center text-center py-1 mt-1">
+                  <div>
+                    <p class="mb-1 h5">{{posts_count}}</p>
+                    <p class="small text-muted mb-0">Posts</p>
+                  </div>
+                  <div class="px-3">
+                    <p class="mb-1 h5">{{following_count}}</p>
+                    <p class="small text-muted mb-0">Followers</p>
+                  </div>
+                  <div>
+                    <p class="mb-1 h5">0</p>
+                    <p class="small text-muted mb-0">Following</p>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-4 text-black text-center">
+                <div class="mb-5">
+                  <p class="lead fw-normal mb-1"> Profile</p>
+                  <div class="p-4" style="background-color: #f8f9fa;">
+                    
+                    {% for profileobjects in profileobjects  %}
+
+                    <div class="about-text go-to">
+                        <h6 class="theme-color lead text-center mx-auto">Bio</h6>
+                        <p class="text-center mx-auto">   {{ profileobjects.bio }}
+                          {% endfor %}
+  
+                        </p>
+                        {% for userobjects in users  %}
+  
+                        <div class="row about-list text-left ml-3">
+                            <div class="col-md-6">
+                                <div class="media">
+              
+                                    <label>Username</label>
+                                    <p>{{ userobjects.username }}</p>
+                                </div>
+                                <div class="media">
+                                    <label>Gender</label>
+                                    <p>M</p>
+                                </div>
+                                <div class="media">
+                                    <label>First Name</label> 
+                                    <p>{{ userobjects.first_name }}</p>
+                                </div>
+                                <div class="media">
+                                    <label>Last Name</label>
+                                    <p>{{ userobjects.last_name }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="media">
+                                    <label>E-mail</label>
+                                    <p>{{userobjects.email}}</p>
+                                </div>
+                 
+                                <div class="media">
+                                    <label>Joined on</label>
+                                    <p>{{ userobjects.date_joined}}</p>
+                                </div>
+                                <div class="media">
+                                    <label>Last seen</label>
+                                    
+                                    <p>{{userobjects.last_login}}</p>
+                                    {% endfor %}
+
+                                   
+                  </div>
+                </div>
+              </div>
+            </div>
+
+                </div>
+            <div class="container  mt-5">
+              
+               
+
+
+
+
+
+              <p class="lead fw-normal mb-0">Recent Posts</p>
+              <p class="mb-0"><a href="#!" class="text-muted">
+
+                
+                  
+              </a></p>                
+              {% for post in posts_feed %}
+                
+
+
+                  <div class="card pl-1" style="max-width: 80rem">
+                          
+                        
+                          <div class="card-body">
+                            <!-- Data -->
+                            <div class="d-flex mb-3">
+                              <a href="/viewprofile/{{ post.user }}">
+                                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
+                                  alt="Avatar" style="height: 40px" />
+                              </a>
+                              <div>
+                                <a href="/viewprofile/{{ post.user }}" class="text-dark mb-0">
+                                  <strong>{{post.user}}</strong>
+                                </a>
+                                <a href="#" class="text-muted d-block" style="margin-top: -6px">
+                                  <small>{{post.created_date}}</small>
+                                </a>
+                              </div>
+                            </div>
+                            <!-- Description -->
+                            <div>
+                              <p>
+                                {{post.post}}
+                              </p>
+                            </div>
+                          </div>
+                          <!-- Media -->
+                          <div class="bg-image hover-overlay ripple rounded-1" data-mdb-ripple-color="light">
+                            <a href="/post/{{post.id}}">
+
+                            <img src='{{ post.image.url }} ' class="h-100 w-100  pl-3 pr-3 " />
+                              <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                            </a>
+                          </div>
+                          <!-- Media -->
+                          <!-- Interactions -->
+                          <div class="card-body">
+                            <!-- Reactions -->
+                            <div class="d-flex justify-content-between mb-3">
+                              <div>
+                                <a href="#">
+                                  <i class="fas fa-thumbs-up text-primary"></i>
+                                  <i class="fas fa-heart text-danger"></i>
+                                  <span>{{ post.likes.count }}</span>
+                                </a>
+                              </div>
+                              <div>
+                                <a href="/post/{{post.id}}" class="text-muted"> {{post.commentcount}} comments </a>
+                              </div>
+                            </div>
+                            <!-- Reactions -->
+                      
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-between text-center border-top border-bottom mb-4">
+                              <button type="button" class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+                                <i class="fas fa-thumbs-up me-2"></i>
+
+                                {% if user in post.likes.all %}
+                                      <a href="{% url 'unlike_post' post.pk %}">Unlike</a>
+                                  {% else %}
+                                      <a href="{% url 'like_post' post.pk %}">Like</a>
+                                  {% endif %}
+
+
+                              </button>
+                              {% if post.user == user %}
+                              <form method="post" action="{% url 'deletepost' %}">
+
+                              <a class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+                                <i class="fas fa-trash me-2"></i>
+                                  {% csrf_token %}
+                                  {{ post.postdeleteform }}
+                                  <input class="btn btn-link btn-lg" type="submit" value="Delete">
+                              </a>
+                              </form>
+                              {% endif %}
+
+
+
+                              <a href="/post/{{post.id}}" class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+                                <i class="fas fa-comment me-2"></i>Comment
+                              </a>
+                            </div>
+                            <!-- Buttons -->
+                      
+                            <!-- Comments -->
+                      
+                            <!-- Input -->
+                            <div class="d-flex mb-3">
+                              {% comment %} <a href="/viewprofile/{{ comment.user }}">
+                                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
+                                  alt="Avatar" style="height: 40px" />
+                              </a> {% endcomment %}
+                              {% comment %} <div class="form-outline w-100">
+                                <div class="card-footer">
+                                  <form method="post" action="{% url 'newsfeed' %}">
+                                    {% csrf_token %}
+                                    {{ post.comment_form.comment }}
+                                    <input type="hidden" name="form_type" value="comment">
+                                    <input type="hidden" name="post_id" value="{{ post.id }}">                   <button type="submit" class="btn btn-primary">Add Comment</button>
+                                  </form>
+                                </div>                    <label class="form-label" for="textAreaExample">Write a comment</label>
+                              </div> {% endcomment %}
+                            </div>
+                      </div>
+
+                      <!-- comments -->
+                      {% for comment in post.comments %}
+
+                      <!--  comment -->
+                      <div class="d-flex mb-3">
+                        <a href="#">
+                          <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" class="border rounded-circle me-2"
+                            alt="Avatar" style="height: 40px" />
+                        </a>
+                        <div>
+                          <div class="bg-light rounded-3 px-3 py-1">
+                            <a href="/viewprofile/{{ comment.user }}" class="text-dark mb-0">
+                              <strong> {{ comment.user }}</strong>
+                            </a>
+                            <a href="#" class="text-muted d-block">
+                              <small> {{ comment.comment }}</small>
+                            </a>
+                            <a href="#" class="text-muted d-block" style="margin-top: -6px">
+                              <small>{{comment.created_date}}</small>
+                              <div>
+                                <a href="#">
+                                  <i class="fas fa-thumbs-up text-primary "></i>
+                                  <span>{{ comment.like.count}}</span>
+                                </a>
+                              </div>
+                          </div>
+                          
+                          <a href="#" class="text-muted small ms-3 me-2"><strong>
+                            
+                            {% if user in comment.like.all %}
+                              <a href="{% url 'unlike_comment' comment.pk %}">Unlike</a>
+                          {% else %}
+                              <a href="{% url 'like_comment' comment.pk %}">Like</a>
+                          {% endif %}
+
+                          </strong></a>
+
+                          <a href="#" class="text-muted small me-2"><strong>
+
+
+                            {% if comment.user == user %}
+                            <a href="{% url 'delete_comment' comment.pk %}"> Delete </a>
+                                  
+                            {% endif %}
+
+
+                          </strong></a>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+
+
+
+                                    
+                                  {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+          
+</div>
+
+
+                    </div>
+                  </div>
+
+
+
+
+
+                    
+                    
+                    
+                    {% endblock %}
+{% block script %}
+    
+<script>
+  var updateBtn = document.getElementById("update-btn");
+  var updateAlert = document.getElementById("update-alert");
+  var closeBtn = updateAlert.querySelector(".close");
+  updateBtn.addEventListener("click", function() {
+    updateAlert.classList.add("show");
+    updateAlert.style.display = "block";
+  });
+  closeBtn.addEventListener("click", function() {
+    updateAlert.classList.remove("show");
+    updateAlert.style.display = "none";
+  });
+  updateAlert.addEventListener("click", function(e) {
+    if (e.target.classList.contains("modal")) {
+      updateAlert.classList.remove("show");
+      updateAlert.style.display = "none";
+    }
+  });
+</script>
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script> {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+      <script src="{% static 'js/popper.js' %}"></script>
+      <script src="{% static 'js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'js/main.js' %}"></script>
+
+{% endblock script %}

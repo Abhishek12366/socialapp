@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
+from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import redirect, render
 from api.models import *
 from .forms import *
@@ -48,7 +49,7 @@ class LoginView(FormView):
                 login(request, user)
                 return redirect("home")
             else:
-                messages.error(request)
+                messages.error("login   faild")
                 return render(request, "login.html", {'form':form})
 
 class IndexView(CreateView, ListView):
@@ -81,8 +82,30 @@ def add_comment(request, *args, **kwargs):
     qs = Posts.objects.get(id=id)
     # Comments.objects.create(comment=cmt, post=qs, user=request.user)
     qs.comments_set.create(user=request.user, comment=cmt)
-    messages.success(request, " your has been Comment added succesfully")
+    messages.success(request, " your comment has been Comment added succesfully")
     return redirect("home")
+
+def delete_comment(request, pk):
+    # get the comment to be deleted
+    comment = get_object_or_404(Comments, pk=pk)
+    # check if the user who created the post is the same as the logged-in user
+        # delete the comment
+    comment.delete()
+    return redirect('home')
+
+def like_comment(request, pk):
+    # retrieve the comment to be liked
+    comment = Comments.objects.get(pk=pk)
+    # add the user to the like many-to-many field
+    comment.liked.add(request.user)
+    return redirect('home')
+def unlike_comment(request, pk):
+    # retrieve the comment to be unliked
+    comment = Comments.objects.get(pk=pk)
+    # remove the user from the like many-to-many field
+    comment.liked.remove(request.user)
+    return redirect('home')
+
 
 def like_post(request, *args, **kwargs):
     id = kwargs.get('id')
@@ -93,14 +116,23 @@ def like_post(request, *args, **kwargs):
         ps.like.add(request.user)
     return redirect("home")
 
-def dislike_post(request, *args, **kwargs):
+# def unlike_post(request, pk):
+#     # retrieve the post to be unliked
+#     post = Posts.objects.get(pk=pk)
+#     # remove the user from the likes many-to-many field
+#     post.like.remove(request.user)
+#     return redirect('home')
+
+def unlike_post(request, *args, **kwargs):
     id = kwargs.get('id')
     ps = Posts.objects.get(id=id)
-    if ps.dislike.contains(request.user):
-        ps.dislike.remove(request.user)
+    if ps.likes.contains(request.user):
+        ps.likes.remove(request.user)
     else:
         ps.dislike.add(request.user)
     return redirect("home")
+
+
 
 def delete_post(request, post_id):
     if request.user.is_authenticated:
@@ -118,6 +150,12 @@ def delete_post(request, post_id):
             return HttpResponse()
     else:
         return HttpResponseRedirect(('login'))
+
+
+
+
+
+
 
 # @csrf_exempt
 # def like_post(request, id):
@@ -200,18 +238,71 @@ def sign_out(request, *args, **kwargs):
     return redirect("sign-in")
 
 
-def search(request):
-    query = request.GET.get('user')
-    users = User.objects.filter(username=query)
-    return render(request, 'search_results.html', {'users': users})
+# def search(request):
+#     query = request.GET.get('user')
+#     users = User.objects.filter(username__icontains=query).exclude(username=request.user.username)
+#     return render(request, 'search_results.html', {'users': users})
+
+# def search(request):
+#   # Get the search term from the query string
+#   query = request.GET.get('q')
+#   # users = User.objects.exclude(pk=request.user.pk)
+
+#   # Search for users with matching usernames
+#   users = User.objects.filter(username__icontains=query).exclude(username=request.user.username)
+
+#   # Build the search results as a list of dictionaries
+#   results = []
+#   for user in users:
+#     results.append({
+#       'username': user.username,
+#       # 'bio':user.profile.bio,
+      
+#     })
+
+#   # Return the search results as JSON
+#     return HttpResponseRedirect(request, 'search_results.html')
+
+
+# @signin_required
+# def profile2(request):
+#     posts_feed =Posts.objects.filter(user=request.user)[:10]
+   
+#     following = request.user.profile.following.all()
+#     following_count = following.count()
+#     posts_count =Posts.objects.filter(user=request.user).count
+#     if request.method == 'POST':
+#       # Get the forms from the request
+#       user_form = UserForm(request.POST, instance=request.user)
+#       profile_form = ProfileForm(request.POST, instance=request.user.profile)
+
+#       # Save the forms if they are valid
+#       if user_form.is_valid() and profile_form.is_valid():
+#         user_form.save()
+#         profile_form.save()
+        
+#         # Update the session authentication hash to prevent session hijacking
+#         update_session_auth_hash(request, user_form.instance)
+        
+#         return redirect('profileview')
+#     else:
+#       # Render the forms if the request method is not POST
+#       user_form = UserForm(instance=request.user)
+#       profile_form = ProfileForm(instance=request.user.profile)
+#     #   users=User.objects.filter(username=request.user)
+      
+#     context = {
+#       'user_form': user_form,
+#       'profile_form': profile_form,'following_count':following_count,'posts_count':posts_count,'posts_feed':posts_feed
+#     }
+#     return render(request, 'profileview.html', context)
+
 
 
 # def profile2(request, username):
 #     user = User.objects.get(username=username)
 #     all_posts = Posts.objects.filter(user_id=request.user)
-#     page_number = request.GET.get('page')
-#     if page_number == None:
-#         page_number = 1
+    
 #     posts = Posts.objects.filter(user_id=request.user).count
 #     followings = []
 #     suggestions = []

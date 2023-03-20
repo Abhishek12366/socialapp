@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user=serializers.CharField(read_only=True)
     created_date = serializers.CharField(read_only=True)
+    likecounts=serializers.CharField(read_only=True)
     class Meta:
         model = Comments
         fields = [

@@ -42,17 +42,25 @@ class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Posts, on_delete=models.CASCADE)
     comment = models.CharField(max_length=200)
+    liked=models.ManyToManyField(User,related_name="likes",null=True)
     created_date = models.DateField(auto_now_add=True)
 
+    def __str__(self):
+        return self.comment
+
+    @property
+    def likecounts(self):
+        return self.liked.all().count()
 class Friends(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
     date = models.DateTimeField(auto_now_add=True)
 
-class Follower(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
-    followers = models.ManyToManyField(User, blank=True, related_name='following')
+class Profile(models.Model):
+      user = models.OneToOneField(User, on_delete=models.CASCADE,null=True,blank=True)
+      bio = models.TextField(max_length=500,default="no bio", blank=True)
+      following = models.ManyToManyField(User, related_name='following', blank=True)
 
-    def __str__(self):
-        return f"User: {self.user}"
-        
+
+def __str__(self):
+        return f'Profile for user {self.user.username}'
